@@ -1,0 +1,117 @@
+{
+  "name": "Chatbot AI",
+  "nodes": [
+    {
+      "parameters": {
+        "public": true,
+        "initialMessages": "Halo, ada yang bisa saya bantu? ",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.chatTrigger",
+      "typeVersion": 1.5,
+      "position": [
+        0,
+        0
+      ],
+      "id": "8c0b778e-664b-4bd2-9058-fb70aea7297e",
+      "name": "When chat message received",
+      "webhookId": "2c1d222e-7f65-4450-acca-abd9ea388ed8"
+    },
+    {
+      "parameters": {
+        "options": {
+          "systemMessage": "Kamu adalah asisten AI yang dirancang untuk membantu pembelajaran bahasa Jepang tingkat dasar. Jawab pertanyaan pengguna dengan ringkas dan akurat menggunakan bahasa Indonesia. Setiap kali memberikan contoh huruf Jepang (Hiragana/Katakana/Kanji), kamu wajib menyertakan cara baca (Romaji) dan terjemahannya"
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 3.1,
+      "position": [
+        224,
+        0
+      ],
+      "id": "93085651-96b3-4d79-b94a-718a728e57ef",
+      "name": "AI Agent"
+    },
+    {
+      "parameters": {
+        "modelName": "models/gemini-2.5-flash",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatGoogleGemini",
+      "typeVersion": 1.2,
+      "position": [
+        96,
+        208
+      ],
+      "id": "d2d260dd-d4e7-48b2-984e-4288cca9c525",
+      "name": "Google Gemini Chat Model",
+      "credentials": {
+        "googlePalmApi": {
+          "id": null,
+          "name": "",
+          "__aiGatewayManaged": true
+        }
+      }
+    },
+    {
+      "parameters": {},
+      "type": "@n8n/n8n-nodes-langchain.memoryBufferWindow",
+      "typeVersion": 1.4,
+      "position": [
+        240,
+        208
+      ],
+      "id": "ceb349c9-1831-41f6-86dc-8109f4447267",
+      "name": "Simple Memory"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "When chat message received": {
+      "main": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Google Gemini Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Simple Memory": {
+      "ai_memory": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_memory",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": true,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate"
+  },
+  "versionId": "4e019194-a428-4e13-a024-b17965d36178",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "25e7213d09acc0388bf46a5b37e0d6740aea36b1153f0a55d025da3065de6454"
+  },
+  "nodeGroups": [],
+  "id": "j6bI5bkOeB3J64V9",
+  "tags": []
+}
