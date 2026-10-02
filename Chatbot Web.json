@@ -1,0 +1,166 @@
+{
+  "name": "Chatbot Web",
+  "nodes": [
+    {
+      "parameters": {
+        "options": {
+          "systemMessage": "Kamu adalah asisten virtual yang ramah, asyik, dan santai untuk memberikan informasi seputar program pelatihan (Bootcamp dan Skill Up).\n\nAturan membalas pesan:\n\nJika pengguna hanya menyapa (misalnya: 'Halo', 'Hai', 'Pagi'): Sapa balik mereka dengan ramah, hangat, dan tawarkan bantuan. Contoh: 'Halo Kak! Ada yang bisa aku bantu seputar program pelatihan kita?'\n\nJika pengguna bertanya \"Apa itu [nama kelas/topik]?\" atau meminta penjelasan:\n\nPertama: Berikan penjelasan singkat, padat, dan informatif tentang topik tersebut menggunakan pengetahuan umummu.\n\nKedua: Setelah menjelaskan, KAMU WAJIB MENGGUNAKAN TOOL GOOGLE SHEETS untuk mencari ketersediaan program tersebut di tempat kita. PENTING: Masukkan HANYA kata kuncinya ke dalam Tool (contoh: cari 'Digital Marketing', BUKAN 'Apa itu Digital Marketing').\n\nKetiga: Rangkai jawabanmu agar mengalir alami. Contoh: 'Digital marketing adalah... [penjelasan singkat]. Nah, kebetulan banget nih Kak, kita punya program pelatihannya lho! Namanya [Nama Pelatihan]. Di sini Kakak bakal belajar [Topik], dan biayanya [Harga].'\n\nJika pengguna hanya menyebutkan nama kelas atau langsung menanyakan harga: KAMU WAJIB LANGSUNG MENGGUNAKAN TOOL GOOGLE SHEETS. Jangan bertanya balik (seperti 'Kakak mau cari kelas apa?') jika kata kunci sudah ada. Jangan menebak-nebak data. Langsung cari datanya dan sampaikan Nama Pelatihan, Topik, dan Harganya dengan gaya bahasa santai.\n\nJika kamu sudah mencari di Tool Google Sheets dan datanya KOSONG (tidak ditemukan): JANGAN error atau bingung. Jika pengguna bertanya apa itu topiknya, tetap berikan penjelasan singkatnya, lalu sampaikan dengan santai kalau saat ini kelas tersebut belum tersedia di daftar program resmi kita."
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 3.1,
+      "position": [
+        144,
+        0
+      ],
+      "id": "ca0ad91a-b8a0-4709-9dcc-569e6e613264",
+      "name": "AI Agent"
+    },
+    {
+      "parameters": {
+        "modelName": "models/gemini-2.5-flash",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatGoogleGemini",
+      "typeVersion": 1.1,
+      "position": [
+        96,
+        208
+      ],
+      "id": "02a9870a-159d-40f9-a9e0-9352ce69ed68",
+      "name": "Google Gemini Chat Model",
+      "credentials": {
+        "googlePalmApi": {
+          "id": "qRtajEXRpSvSv48Q",
+          "name": "Google Gemini(PaLM) Api account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "documentId": {
+          "__rl": true,
+          "value": "1lY7W9ppbSjLLToa0vsxlCIBZ5BCmxSQ-C7dxEW-JIPY",
+          "mode": "list",
+          "cachedResultName": "Salinan dari n8n 1",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1lY7W9ppbSjLLToa0vsxlCIBZ5BCmxSQ-C7dxEW-JIPY/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Sheet1",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1lY7W9ppbSjLLToa0vsxlCIBZ5BCmxSQ-C7dxEW-JIPY/edit#gid=0"
+        },
+        "combineFilters": "OR",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheetsTool",
+      "typeVersion": 4.7,
+      "position": [
+        368,
+        208
+      ],
+      "id": "60714c50-2dd1-49cd-b3ba-8e9e6188c368",
+      "name": "Get row(s) in sheet in Google Sheets",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "xvrY1cQ8iRnjVkGt",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {},
+      "type": "@n8n/n8n-nodes-langchain.memoryBufferWindow",
+      "typeVersion": 1.4,
+      "position": [
+        240,
+        208
+      ],
+      "id": "f20faac6-cab1-474b-8eec-9351d12540dd",
+      "name": "Simple Memory"
+    },
+    {
+      "parameters": {
+        "public": true,
+        "initialMessages": "Halo, ada yang bisa dibantu?",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.chatTrigger",
+      "typeVersion": 1.5,
+      "position": [
+        -80,
+        0
+      ],
+      "id": "35ac7b70-bcf8-4536-8622-675870e8f29b",
+      "name": "When chat message received",
+      "webhookId": "2ad1f90d-ab34-4f25-b10f-7a0482e8ca28"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Google Gemini Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get row(s) in sheet in Google Sheets": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "AI Agent": {
+      "main": [
+        []
+      ]
+    },
+    "Simple Memory": {
+      "ai_memory": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_memory",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "When chat message received": {
+      "main": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": true,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate"
+  },
+  "versionId": "4d038cc7-3a9b-4f91-af58-e416ea413e13",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "dc96f10ae7dc95d3c138575ba243a0a167923dbcb524841d451aadf9135d5fb3"
+  },
+  "nodeGroups": [],
+  "id": "NHsV28aNTtKkVUzt",
+  "tags": []
+}
